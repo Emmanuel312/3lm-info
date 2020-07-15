@@ -6,7 +6,8 @@ export function* getEmployees() {
   const { getEmployeesSuccess, getEmployeesFailure } = EmployeesActions;
 
   try {
-    const response = yield call(api.get, "/employees");
+    const response = yield call(api.get, "/employee");
+    console.log(response.data);
     yield put(getEmployeesSuccess(response.data));
   } catch (error) {
     yield put(getEmployeesFailure());
@@ -18,9 +19,10 @@ export function* deleteEmployee(action: any) {
   const { deleteEmployeeSuccess, deleteEmployeeFailure } = EmployeesActions;
 
   try {
-    yield call(api.delete, `/employees/${action.id}`);
+    yield call(api.delete, `/employee/${action.id}`);
     yield put(deleteEmployeeSuccess(action.id));
   } catch (error) {
+    console.log(error);
     yield put(deleteEmployeeFailure());
   }
 }

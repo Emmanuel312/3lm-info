@@ -15,14 +15,6 @@
       "officeId": 1,
       "dateOfBirth": "1998-03-15T16:00:00Z",
       "salary": 3900.54
-    },
-    {
-      "id": 3,
-      "name": "José",
-      "lastName": "Aragão",
-      "officeId": 2,
-      "dateOfBirth": "1990-02-20T16:00:00Z",
-      "salary": 3960.54
     }
   ],
   "offices": [

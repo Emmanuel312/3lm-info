@@ -1,10 +1,15 @@
 export interface IEmployee {
-  id: 1;
+  _id: 1;
   name: string;
   lastName: string;
-  officeId: number;
+  officeId: IOffice;
   dateOfBirth: string;
   salary: number;
+}
+
+export interface IOffice {
+  _id: string;
+  description: string;
 }
 
 export interface IStore {

@@ -54,7 +54,7 @@ const deleteEmployeeSuccess = (state = INITIAL_STATE, action: any): IStore => {
     ...state,
     loading: false,
     error: false,
-    employees: state.employees.filter((employee) => employee.id !== action.id),
+    employees: state.employees.filter((employee) => employee._id !== action.id),
   };
 };
 
