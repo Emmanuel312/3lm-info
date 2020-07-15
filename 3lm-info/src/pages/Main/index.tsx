@@ -1,16 +1,19 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Container } from "./styles";
+import { Container, Card, InfoTitle, Header, EmployeesList } from "./styles";
 import { Creators as EmployeesActions } from "../../store/ducks/employees";
 import { RootState } from "../../store/ducks/rootReducer";
+import SearchBar from "../../components/SearchBar";
+import EmployeeItem from "../../components/EmployeeItem";
+import AppBar from "../../components/AppBar";
 
 const Main: React.FC = () => {
   const dispatch = useDispatch();
   const { employees, error, loading } = useSelector(
     (state: RootState) => state.employees
   );
+  const quantity = useMemo(() => employees.length, [employees]);
 
-  console.log(employees);
   useEffect(() => {
     function fetchEmployees() {
       dispatch(EmployeesActions.getEmployeesRequest());
@@ -21,7 +24,20 @@ const Main: React.FC = () => {
 
   return (
     <Container>
-      <h1>Main</h1>
+      <AppBar />
+
+      <Card>
+        <Header>
+          <InfoTitle>{`Você possui ${quantity} funcionários no total`}</InfoTitle>
+          <SearchBar />
+        </Header>
+
+        <EmployeesList>
+          {employees.map((employee) => (
+            <EmployeeItem employee={employee} />
+          ))}
+        </EmployeesList>
+      </Card>
     </Container>
   );
 };

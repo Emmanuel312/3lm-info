@@ -2,13 +2,17 @@ import React from "react";
 import GlobalStyles from "./styles/global";
 import { store } from "./store";
 import { Provider } from "react-redux";
-import Main from "./pages/Main";
+import { BrowserRouter } from "react-router-dom";
+import Routes from "./routes";
 
 const App: React.FC = () => {
   return (
     <Provider store={store}>
-      <GlobalStyles />
-      <Main />
+      <BrowserRouter>
+        <GlobalStyles />
+
+        <Routes />
+      </BrowserRouter>
     </Provider>
   );
 };

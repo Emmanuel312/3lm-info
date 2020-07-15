@@ -1,19 +1,5 @@
 import { createActions, createReducer } from "reduxsauce";
-
-interface IEmployee {
-  id: 1;
-  name: string;
-  lastName: string;
-  officeId: number;
-  dateOfBirth: string;
-  salary: number;
-}
-
-interface IStore {
-  employees: IEmployee[];
-  loading: boolean;
-  error: boolean;
-}
+import { IStore } from "../../../interfaces";
 
 // Action types & creators
 export const { Types, Creators } = createActions({
@@ -25,6 +11,11 @@ export const { Types, Creators } = createActions({
   getEmployeeRequest: ["id"],
   getEmployeeSuccess: ["employee"],
   getEmployeeFailure: [],
+
+  // deleta um funcionario por id
+  deleteEmployeeRequest: ["id"],
+  deleteEmployeeSuccess: ["id"],
+  deleteEmployeeFailure: [],
 });
 
 // Handlers
@@ -34,7 +25,8 @@ const INITIAL_STATE: IStore = {
   error: false,
 };
 
-const getEmployeesRequest = (state = INITIAL_STATE) => {
+// get
+const getEmployeesRequest = (state = INITIAL_STATE): IStore => {
   return { ...state, loading: true, error: false };
 };
 
@@ -43,11 +35,30 @@ const getEmployeesSuccess = (state = INITIAL_STATE, action: any): IStore => {
     ...state,
     loading: false,
     error: false,
-    employees: [...state.employees, action.employees],
+    employees: [...action.employees],
   };
 };
 
-const getEmployeesFailure = (state = INITIAL_STATE) => {
+const getEmployeesFailure = (state = INITIAL_STATE): IStore => {
+  return { ...state, loading: false, error: true };
+};
+
+// delete
+
+const deleteEmployeeRequest = (state = INITIAL_STATE): IStore => {
+  return { ...state, loading: true, error: false };
+};
+
+const deleteEmployeeSuccess = (state = INITIAL_STATE, action: any): IStore => {
+  return {
+    ...state,
+    loading: false,
+    error: false,
+    employees: state.employees.filter((employee) => employee.id !== action.id),
+  };
+};
+
+const deleteEmployeeFailure = (state = INITIAL_STATE): IStore => {
   return { ...state, loading: false, error: true };
 };
 
@@ -56,4 +67,7 @@ export default createReducer(INITIAL_STATE, {
   [Types.GET_EMPLOYEES_REQUEST]: getEmployeesRequest,
   [Types.GET_EMPLOYEES_SUCCESS]: getEmployeesSuccess,
   [Types.GET_EMPLOYEES_FAILURE]: getEmployeesFailure,
+  [Types.DELETE_EMPLOYEE_REQUEST]: deleteEmployeeRequest,
+  [Types.DELETE_EMPLOYEE_SUCCESS]: deleteEmployeeSuccess,
+  [Types.DELETE_EMPLOYEE_FAILURE]: deleteEmployeeFailure,
 });
