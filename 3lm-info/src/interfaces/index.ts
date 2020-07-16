@@ -23,5 +23,5 @@ export interface IEmployeeInput {
   lastName: string;
   officeId: string;
   dateOfBirth: string;
-  salary: number;
+  salary: string;
 }

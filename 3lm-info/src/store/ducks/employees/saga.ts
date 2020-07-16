@@ -12,7 +12,7 @@ export function* getEmployees() {
       api.get,
       "/employee"
     );
-    console.log(response.data);
+
     yield put(getEmployeesSuccess(response.data));
   } catch (error) {
     yield put(getEmployeesFailure());
@@ -47,7 +47,6 @@ export function* postEmployee(action: any) {
     );
     yield put(postEmployeeSuccess(response.data));
   } catch (error) {
-    console.log(error);
     yield put(postEmployeeFailure());
   }
 }

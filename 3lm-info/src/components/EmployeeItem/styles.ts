@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 export const Container = styled.li`
   display: flex;
+  width: 70vw;
   align-items: center;
   justify-content: space-between;
   background: #fff;
@@ -30,10 +31,7 @@ export const Container = styled.li`
   }
 `;
 
-export const Info = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
+export const Info = styled.div``;
 
 export const InfoTitle = styled.h2`
   font-size: 1rem;
@@ -48,7 +46,7 @@ export const InfoContent = styled.span`
 export const ActionButton = styled.button`
   width: 4rem;
   height: 4rem;
-  margin-right: 3rem;
+  /* margin-right: 3rem; */
   border-radius: 2rem;
   transition: background 0.5s;
   transition: color 0.2s;

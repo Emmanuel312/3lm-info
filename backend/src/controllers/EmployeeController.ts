@@ -7,7 +7,7 @@ class EmployeeController implements ICrud {
     try {
       const { name, lastName, officeId, dateOfBirth, salary } = request.body;
 
-      const employee = await Employee.create({
+      const employeeCreated = await Employee.create({
         name,
         lastName,
         officeId,
@@ -15,6 +15,10 @@ class EmployeeController implements ICrud {
         salary,
       });
 
+      const employee = await Employee.findById(employeeCreated._id).populate({
+        path: "officeId",
+        select: "description",
+      });
       return response.json(employee);
     } catch (error) {
       return response.status(500).json({ error });
@@ -23,10 +27,12 @@ class EmployeeController implements ICrud {
 
   public async index(request: Request, response: Response) {
     try {
-      const employees = await Employee.find({}).populate({
-        path: "officeId",
-        select: "description",
-      });
+      const employees = await Employee.find({})
+        .populate({
+          path: "officeId",
+          select: "description",
+        })
+        .sort("-createdAt");
 
       return response.json(employees);
     } catch (error) {

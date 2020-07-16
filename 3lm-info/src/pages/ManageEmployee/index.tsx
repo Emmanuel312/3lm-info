@@ -1,7 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, FormEvent, ChangeEvent, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import { RootState } from "../../store/ducks/rootReducer";
+import { useHistory, useLocation } from "react-router-dom";
 import {
   Container,
   Title,
@@ -12,29 +14,52 @@ import {
   Select,
   Button,
 } from "./styles";
-import { IEmployeeInput, IOffice } from "../../interfaces";
+import { IEmployeeInput, IOffice, IEmployee } from "../../interfaces";
 import { Creators as EmployeesActions } from "../../store/ducks/employees";
 import api from "../../services/api";
 import { AxiosResponse } from "axios";
-import { parseISO } from "date-fns/esm";
 
-const AddEmployee: React.FC = () => {
+const ManageEmployee: React.FC = () => {
+  const location = useLocation();
+  const history = useHistory();
   const [inputs, setInputs] = useState<IEmployeeInput>({} as IEmployeeInput);
   const [offices, setOffices] = useState<IOffice[]>([]);
   const { loading, error } = useSelector((state: RootState) => state.employees);
   const dispatch = useDispatch();
+  const searchParams = new URLSearchParams(location.search);
 
   useEffect(() => {
     async function fetchOffices() {
       try {
         const response: AxiosResponse<IOffice[]> = await api.get("office");
         setOffices(response.data);
+        setInputs({ ...inputs, officeId: response.data[0]?._id });
       } catch (error) {
         toast.error("Algo deu errado, tente novamente");
       }
     }
 
+    async function fetchEmployee() {
+      const action = searchParams.get("action");
+      const _id = searchParams.get("_id");
+
+      if (action === "edit") {
+        const { data }: AxiosResponse<IEmployee> = await api.get(
+          `employee/${_id}`
+        );
+
+        setInputs({
+          name: data.name,
+          lastName: data.lastName,
+          officeId: data.officeId._id,
+          dateOfBirth: data.dateOfBirth,
+          salary: String(data.salary),
+        });
+      }
+    }
+
     fetchOffices();
+    fetchEmployee();
   }, []);
 
   useEffect(() => {
@@ -45,13 +70,14 @@ const AddEmployee: React.FC = () => {
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
+
     const inputsFormatted: IEmployeeInput = {
       ...inputs,
-      salary: Number(inputs.salary),
       dateOfBirth: new Date(inputs.dateOfBirth).toString(),
     };
-    console.log(inputsFormatted);
+
     dispatch(EmployeesActions.postEmployeeRequest(inputsFormatted));
+    history.goBack();
   }
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
@@ -60,11 +86,12 @@ const AddEmployee: React.FC = () => {
   return (
     <Container>
       <Card>
-        <Title>Sobre o novo funcionário</Title>
+        <Title>Sobre o funcionário</Title>
         <form onSubmit={handleSubmit}>
           <Sentence>
             <Text>O primeiro nome dele é </Text>
             <Input
+              value={inputs.name}
               onChange={handleChange}
               name="name"
               placeholder="PRIMEIRO NOME"
@@ -74,12 +101,14 @@ const AddEmployee: React.FC = () => {
 
           <Sentence>
             <Input
+              value={inputs.lastName}
               onChange={handleChange}
               name="lastName"
               placeholder="SOBRENOME"
             />
             <Text>. A data de nascimento é </Text>
             <Input
+              value={inputs.dateOfBirth}
               type="date"
               onChange={handleChange}
               name="dateOfBirth"
@@ -102,14 +131,14 @@ const AddEmployee: React.FC = () => {
             </Select>
             <Text>receberá um salario de </Text>
             <Input
-              type="number"
-              step="0.01"
+              value={inputs.salary}
               onChange={handleChange}
+              step="any"
               name="salary"
               placeholder="SALARIO"
             />
             <Text>.</Text>
-            <Button type="submit">Adicionar</Button>
+            <Button type="submit">Enviar</Button>
           </Sentence>
         </form>
       </Card>
@@ -118,4 +147,4 @@ const AddEmployee: React.FC = () => {
   );
 };
 
-export default AddEmployee;
+export default ManageEmployee;

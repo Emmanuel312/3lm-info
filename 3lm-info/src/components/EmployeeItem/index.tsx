@@ -1,5 +1,6 @@
 import React from "react";
 import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import {
   Container,
@@ -18,6 +19,7 @@ interface Props {
 }
 
 const EmployeeItem: React.FC<Props> = ({ employee }) => {
+  const history = useHistory();
   const { _id, dateOfBirth, lastName, name, officeId, salary } = employee;
   const dateOfBirthFormatted = format(parseISO(dateOfBirth), "dd/MM/yyyy");
   const salaryFormatted = formatSalary(salary);
@@ -26,7 +28,7 @@ const EmployeeItem: React.FC<Props> = ({ employee }) => {
   const { deleteEmployeeRequest } = EmployeeCreators;
 
   function handleEdit() {
-    console.log("edit");
+    history.push(`/employee?action=edit&_id=${_id}`);
   }
 
   function handleDelete() {
@@ -48,7 +50,7 @@ const EmployeeItem: React.FC<Props> = ({ employee }) => {
 
       <Info>
         <InfoTitle>Cargo</InfoTitle>
-        <InfoContent>{officeId.description}</InfoContent>
+        <InfoContent>{officeId?.description || "Sem cargo"}</InfoContent>
       </Info>
 
       <Info>

@@ -1,12 +1,22 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Container, Card, InfoTitle, Header, EmployeesList } from "./styles";
+import {
+  Container,
+  Card,
+  InfoTitle,
+  Header,
+  EmployeesList,
+  Content,
+} from "./styles";
 import { Creators as EmployeesActions } from "../../store/ducks/employees";
 import { RootState } from "../../store/ducks/rootReducer";
-import SearchBar from "../../components/SearchBar";
 import EmployeeItem from "../../components/EmployeeItem";
 import AppBar from "../../components/AppBar";
 import { ToastContainer, toast } from "react-toastify";
+import Skeleton from "react-loading-skeleton";
+import ManageOffice from "../../components/ManageOffice";
+
 const Main: React.FC = () => {
   const dispatch = useDispatch();
   const { employees, error, loading } = useSelector(
@@ -24,9 +34,8 @@ const Main: React.FC = () => {
     function fetchEmployees() {
       dispatch(EmployeesActions.getEmployeesRequest());
     }
-
     fetchEmployees();
-  }, [dispatch]);
+  }, []);
 
   return (
     <Container>
@@ -35,14 +44,19 @@ const Main: React.FC = () => {
       <Card>
         <Header>
           <InfoTitle>{`Você possui ${quantity} funcionários no total`}</InfoTitle>
-          <SearchBar />
         </Header>
-
-        <EmployeesList>
-          {employees.map((employee) => (
-            <EmployeeItem employee={employee} />
-          ))}
-        </EmployeesList>
+        <Content>
+          {loading ? (
+            <Skeleton height="8rem" duration={3} count={5}></Skeleton>
+          ) : (
+            <EmployeesList>
+              {employees.map((employee) => (
+                <EmployeeItem employee={employee} />
+              ))}
+            </EmployeesList>
+          )}
+          <ManageOffice></ManageOffice>
+        </Content>
       </Card>
       <ToastContainer />
     </Container>
