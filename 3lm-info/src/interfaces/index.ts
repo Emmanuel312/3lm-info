@@ -21,7 +21,7 @@ export interface IStore {
 export interface IEmployeeInput {
   name: string;
   lastName: string;
-  officeId: number;
+  officeId: string;
   dateOfBirth: string;
   salary: number;
 }

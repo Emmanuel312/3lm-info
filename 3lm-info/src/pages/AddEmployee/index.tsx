@@ -1,16 +1,59 @@
-import React, { useState, FormEvent, ChangeEvent } from "react";
-
-import { Container, Title, Sentence, Text, Input, Card } from "./styles";
-import { IEmployeeInput } from "../../interfaces";
+import React, { useState, FormEvent, ChangeEvent, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
+import { RootState } from "../../store/ducks/rootReducer";
+import {
+  Container,
+  Title,
+  Sentence,
+  Text,
+  Input,
+  Card,
+  Select,
+  Button,
+} from "./styles";
+import { IEmployeeInput, IOffice } from "../../interfaces";
+import { Creators as EmployeesActions } from "../../store/ducks/employees";
+import api from "../../services/api";
+import { AxiosResponse } from "axios";
+import { parseISO } from "date-fns/esm";
 
 const AddEmployee: React.FC = () => {
   const [inputs, setInputs] = useState<IEmployeeInput>({} as IEmployeeInput);
+  const [offices, setOffices] = useState<IOffice[]>([]);
+  const { loading, error } = useSelector((state: RootState) => state.employees);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    async function fetchOffices() {
+      try {
+        const response: AxiosResponse<IOffice[]> = await api.get("office");
+        setOffices(response.data);
+      } catch (error) {
+        toast.error("Algo deu errado, tente novamente");
+      }
+    }
+
+    fetchOffices();
+  }, []);
+
+  useEffect(() => {
+    if (error) {
+      toast.error("Algo deu errado, tente novamente");
+    }
+  }, [error]);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    console.log(inputs);
+    const inputsFormatted: IEmployeeInput = {
+      ...inputs,
+      salary: Number(inputs.salary),
+      dateOfBirth: new Date(inputs.dateOfBirth).toString(),
+    };
+    console.log(inputsFormatted);
+    dispatch(EmployeesActions.postEmployeeRequest(inputsFormatted));
   }
-  function handleChange(e: any) {
+  function handleChange(e: ChangeEvent<HTMLInputElement>) {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
   }
 
@@ -37,6 +80,7 @@ const AddEmployee: React.FC = () => {
             />
             <Text>. A data de nascimento é </Text>
             <Input
+              type="date"
               onChange={handleChange}
               name="dateOfBirth"
               placeholder="DATA DE NASCIMENTO"
@@ -45,23 +89,31 @@ const AddEmployee: React.FC = () => {
 
           <Sentence>
             <Text>. Trabalhando no cargo de </Text>
-            <Input
-              onChange={handleChange}
+            <Select
+              onChange={(e) =>
+                setInputs({ ...inputs, officeId: e.target.value })
+              }
               name="officeId"
-              placeholder="CARGO"
-            />
+              value={inputs.officeId}
+            >
+              {offices?.map((office) => (
+                <option value={office._id}>{office.description}</option>
+              ))}
+            </Select>
             <Text>receberá um salario de </Text>
             <Input
+              type="number"
+              step="0.01"
               onChange={handleChange}
               name="salary"
               placeholder="SALARIO"
             />
             <Text>.</Text>
+            <Button type="submit">Adicionar</Button>
           </Sentence>
-
-          <button type="submit">enviar</button>
         </form>
       </Card>
+      <ToastContainer />
     </Container>
   );
 };

@@ -25,15 +25,36 @@ export const Title = styled.h1`
 export const Sentence = styled.div`
   margin-bottom: 3rem;
 `;
+
 export const Text = styled.strong`
   font-size: 1.5rem;
   color: #ccc;
   font-weight: 500;
 `;
+
 export const Input = styled.input`
-  height: 5rem;
+  height: 4rem;
   background: #eee;
   padding: 1rem;
-  border-radius: 2.5rem;
+  border-radius: 2rem;
   margin: 0 2rem;
+`;
+
+export const Select = styled.select`
+  height: 4rem;
+  background: #eee;
+  padding: 1rem;
+  border-radius: 2rem;
+  margin: 0 2rem;
+`;
+
+export const Button = styled.button`
+  height: 4rem;
+  background: #52e88f;
+  padding: 0 2rem;
+  border-radius: 2rem;
+  margin: 0 2rem;
+  color: #fff;
+  font-weight: bold;
+  text-align: center;
 `;
